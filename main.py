@@ -49,11 +49,14 @@ for img_path in image_list[1:]:
     f = cv2.imread(os.path.join(data_path, img_path))
     crop_img = cv2.cvtColor(f[int(center[1] - height / 2):int(center[1] + height / 2),
                               int(center[0] - width / 2):int(center[0] + width / 2)], cv2.COLOR_RGB2GRAY)
+    cv2.resize(crop_img, (width, height), crop_img)
     F = np.fft.fft2(crop_img)
     # F = np.log(np.abs(F))
     H = (A / B).conjugate()
     G = np.multiply(F, H.conjugate())
     g = np.fft.ifft2(G)
+    cv2.imshow('g', np.asarray(g, dtype=np.uint8))
+    cv2.waitKey(10)
     m, n = np.shape(g)
     index = int(g.argmax())
     x = int(index / n)
@@ -63,6 +66,6 @@ for img_path in image_list[1:]:
     # cv2.circle(f, (left, top), 10, (255, 0, 0))
     f = cv2.rectangle(f, (left, top), (left + width, top + height), (0, 0, 255), 2)
     cv2.imshow('12', f)
-    cv2.waitKey(100)
+    cv2.waitKey(10)
     A = eta * np.multiply(G, F.conjugate()) + (1 - eta) * A
     B = eta * np.multiply(F, F.conjugate()) + (1 - eta) * B
